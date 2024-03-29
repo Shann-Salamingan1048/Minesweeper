@@ -1,8 +1,8 @@
 #include "Game.h"
 void Game::initWindow()
 {
-	this->videoMode.height = 1000;
-	this->videoMode.width = 1000;
+	this->videoMode.height = 1200;
+	this->videoMode.width = 1200;
 	this->window = std::make_unique<sf::RenderWindow>(this->videoMode, "Minesweeper", sf::Style::Titlebar | sf::Style::Close); // smart ptr
 	this->window->setFramerateLimit(60);
 
@@ -20,9 +20,7 @@ void Game::pollEvents()
 		case sf::Event::KeyPressed:
 			switch (event.key.code)
 			{
-			case sf::Keyboard::A:
-				
-				break;
+			
 			case sf::Keyboard::D:
 				
 				break;
@@ -61,7 +59,7 @@ void Game::render()
 {
 	this->window->clear();
 	// render
-
-
+	this->cells.renderCells(*this->window);
+	this->cells.ifMouseInClicked(*this->window);
 	this->window->display();
 }
