@@ -8,6 +8,8 @@
 #include <iostream>
 #include "Global.h"
 #include <iomanip>
+#include <random>
+#include <set>
 class Cells
 {
 private:
@@ -28,9 +30,11 @@ private:
 	bool isLeftMouseClicked;
 	bool isRightMouseClicked;
 	TileMaps tp;
-	int count; // for 1 - 9 numbers cells , experimental only
-	inline void CalculationsBombNumbers();
+	uint16_t count; // for 1 - 9 numbers cells , experimental only
+	void CalculationsBombNumbers();
 	inline void subCalBomb(const uint16_t& Check_i, const uint16_t& Check_k, const uint16_t& i, const uint16_t& k);
+	void RandomizeBombs();
+	void printTileMap_of_Bomb();
 public:
 	Cells();
 	~Cells();
