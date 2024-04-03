@@ -126,7 +126,7 @@ Cells::Cells()
 {
 	this->initCells();
 	this->RandomizeBombs();
-	this->printTileMap_of_Bomb();
+	//this->printTileMap_of_Bomb();
 	this->CalculationsBombNumbers();
 }
 

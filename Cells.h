@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <random>
 #include <set>
+
 class Cells
 {
 private:

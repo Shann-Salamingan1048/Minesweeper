@@ -10,7 +10,7 @@ void Cells::CalculationsBombNumbers()
 	this->count = 1;
 	for (uint16_t i = 0; i < Rows; i++)
 	{
-		
+
 		for (uint16_t k = 0; k < Columns; k++)
 		{
 			if (this->tp.TileMapVector_Init[i][k] != 10) // empty or if it is 0 - 7 which are not bombs
@@ -45,7 +45,7 @@ void Cells::CalculationsBombNumbers()
 					}
 				}
 				else if (k == 0 && (i != 0 && i != Rows - 1)) // very left , no uppper or lower edge, 5 blocks 
-				{ 
+				{
 					for (uint16_t l = 0; l < 3; l++)
 					{
 						uint16_t Check_i = i - 1 + l;
@@ -124,7 +124,7 @@ void Cells::CalculationsBombNumbers()
 						for (uint16_t p = 0; p < 3; p++)
 						{
 							uint16_t Check_k = k - 1 + p;
-							subCalBomb(Check_i, Check_k, i, k); 
+							subCalBomb(Check_i, Check_k, i, k);
 						}
 					}
 				}
@@ -148,7 +148,7 @@ void Cells::printTileMap_of_Bomb()
 }
 inline void Cells::subCalBomb(const uint16_t& Check_i, const uint16_t& Check_k, const uint16_t& i, const uint16_t& k)
 {
-	
+
 	if (Check_k == k && Check_i == i) // if it is center then skip
 		return;
 	else
@@ -159,7 +159,7 @@ inline void Cells::subCalBomb(const uint16_t& Check_i, const uint16_t& Check_k, 
 		}
 		else // if it is 0 - 7
 		{
-			std::cout << this->count << ".Check i : " << Check_i << ", Check K: " << Check_k << "\n";
+			//std::cout << this->count << ".Check i : " << Check_i << ", Check K: " << Check_k << "\n";
 			tp.TileMapVector_Init[Check_i][Check_k]++;
 			this->count++;
 		}
@@ -168,33 +168,28 @@ inline void Cells::subCalBomb(const uint16_t& Check_i, const uint16_t& Check_k, 
 
 void Cells::RandomizeBombs()
 {
-	this->tp.TileMapVector_Init.resize(Rows);
-	for (auto& row : this->tp.TileMapVector_Init)
-	{
-		row.resize(Columns);
-	}
-	std::random_device rd; 
-	std::mt19937 gen(rd()); 
+	std::random_device rd;
+	std::mt19937 gen(rd());
 	std::set<std::pair<int, int>> StoreIndexes;
 	// Define a distribution
 	std::uniform_int_distribution<> ColumnRandom(0, Columns - 1); // index, from 0 to ColumnsNumber - 1
 	std::uniform_int_distribution<> RowRandom(0, Rows - 1); // index, from 0 to RowsNumbers - 1
-	while (StoreIndexes.size() < NumberOfBombs)
+	while (StoreIndexes.size() < NumberOfBombs) 
 	{
-		uint16_t RowIndex = RowRandom(gen);
+		uint16_t RowIndex = RowRandom(gen); 
 		uint16_t ColumnIndex = ColumnRandom(gen);
-		// Check if the pair is not repeated
-		if (StoreIndexes.find({ RowIndex, ColumnIndex }) == StoreIndexes.end())
-		{
-			StoreIndexes.insert({ RowIndex, ColumnIndex });
-		}
+		//std::cout << "Not True Row: " << RowIndex << ", Column: " << ColumnIndex << "\n";
+		StoreIndexes.insert({ RowIndex, ColumnIndex });  // set does not allow duplication
+		//std::cout << "Size of Set: " << StoreIndexes.size() << "\n";
 	}
+	// StoreIndexes.insert({ 1,1 });
+	// StoreIndexes.insert({ 1,1 });
 	//this->count = 1;
-	for (const auto&[Row, Column] : StoreIndexes)
+	for (const auto& [Row, Column] : StoreIndexes)
 	{
 		tp.TileMapVector_Init[Row][Column] = 10;
-		/*std::cout << this->count << ". True set: " << Row << ", " << Column << "\n";
-		this->count++;*/
+		//std::cout << this->count << ". True set: " << Row << ", " << Column << "\n";
+		//this->count++;
 	}
 	//this->count = 0;
 }
