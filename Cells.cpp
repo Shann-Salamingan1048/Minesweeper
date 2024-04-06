@@ -17,7 +17,7 @@ void Cells::initCells()
 	{
 		row.resize(Columns);
 	}
-	this->UnknownCellSprite.setScale(4, 4); // 30 * 4 = 120 (x) , 30 * 4 = 120 (y) .. 120 x 120
+	this->UnknownCellSprite.setScale(SetScale_Width, SetScale_Height); // 30 * 4 = 120 (x) , 30 * 4 = 120 (y) .. 120 x 120
 
 
 
@@ -25,8 +25,8 @@ void Cells::initCells()
 	{
 		for (uint16_t k = 0; k < Columns; k++)
 		{
-			this->UnknownCellSprite.setPosition(sf::Vector2(i * this->UnknownCellSprite.getGlobalBounds().width
-				, k * this->UnknownCellSprite.getGlobalBounds().height));
+			this->UnknownCellSprite.setPosition(sf::Vector2(k * this->UnknownCellSprite.getGlobalBounds().width
+				, i * this->UnknownCellSprite.getGlobalBounds().height)); // width and height
 			this->CellsVector[i][k] = this->UnknownCellSprite;
 		}
 	}
@@ -34,32 +34,38 @@ void Cells::initCells()
 	// Empty Cell Sprite
 	this->EmptyCellSprite.setTexture(this->TextureAllTypeCells);
 	this->EmptyCellSprite.setTextureRect(sf::IntRect(43, 30, Width, Height)); // left, top, width, height
-	this->EmptyCellSprite.setScale(4, 4);  // 30 * 4 = 120 (x) , 30 * 4 = 120 (y) .. 120 x 120
+	this->EmptyCellSprite.setScale(SetScale_Width, SetScale_Height);  // 30 * 4 = 120 (x) , 30 * 4 = 120 (y) .. 120 x 120
 
 	// Bomb Cell Sprite
 	this->BombCellSprite.setTexture(this->TextureAllTypeCells);
 	this->BombCellSprite.setTextureRect(sf::IntRect(340, 30, Width, Height));
-	this->BombCellSprite.setScale(4, 4);
+	this->BombCellSprite.setScale(SetScale_Width, SetScale_Height);
 
 	// not Bomb Cell Sprite
 	this->NotBombCellSprite.setTexture(this->TextureAllTypeCells);
 	this->NotBombCellSprite.setTextureRect(sf::IntRect(373, 30, Width, Height));
-	this->NotBombCellSprite.setScale(4, 4);
+	this->NotBombCellSprite.setScale(SetScale_Width, SetScale_Height);
 
-	// Numbers indicator Cell Vector
-	this->NumberSpriteVector.resize(Number_ofNumberCellsSprite); // resize
-	this->NumberSprite.setTexture(this->TextureAllTypeCells);
-	for (uint16_t i = 0; i < Number_ofNumberCellsSprite; i++)
-	{
-		this->NumberSprite.setTextureRect(sf::IntRect((76 + (i * 33)), 30, Width, Height));
-		this->NumberSprite.setScale(4, 4);
-
-		this->NumberSpriteVector[i] = this->NumberSprite;
-	}
 	// Flagged Sprite Cell
 	this->FlaggedSprite.setTexture(this->TextureAllTypeCells);
 	this->FlaggedSprite.setTextureRect(sf::IntRect(400, 675, Width, Height));
-	this->FlaggedSprite.setScale(4, 4);
+	this->FlaggedSprite.setScale(SetScale_Width, SetScale_Height);
+
+	// Numbers indicator Cell Vector
+	this->SpriteVector.resize(NumberCellsSprite); // resize(11)
+	this->NumberSprite.setTexture(this->TextureAllTypeCells); 
+
+	this->SpriteVector[0] = this->EmptyCellSprite; // 0 
+	for (uint16_t i = 0; i < 8; i++) // for numbers
+	{
+		this->NumberSprite.setTextureRect(sf::IntRect((76 + ( (i) * 33)), 30, Width, Height));
+		this->NumberSprite.setScale(SetScale_Width, SetScale_Height);
+
+		this->SpriteVector[i + 1] = this->NumberSprite; // 1 - 8
+	}
+	this->SpriteVector[9] = this->FlaggedSprite; // 9 
+	this->SpriteVector[10] = this->BombCellSprite; // 10
+
 }
 void Cells::ifMouseInClicked(sf::RenderWindow& window) {
 	// Get the mouse position relative to the window
@@ -73,19 +79,24 @@ void Cells::ifMouseInClicked(sf::RenderWindow& window) {
 		{
 			//std::cout << "Clicked!\n"; 
 			isLeftMouseClicked = true;
-			for (uint16_t i = 0; i < Rows; i++)
+			for (uint16_t row = 0; row < Rows; row++)
 			{
-				for (uint16_t k = 0; k < Columns; k++)
+				for (uint16_t column = 0; column < Columns; column++)
 				{
-					sf::FloatRect cellBounds = this->CellsVector[i][k].getGlobalBounds();
+					sf::FloatRect cellBounds = this->CellsVector[row][column].getGlobalBounds();
 					if (cellBounds.contains(static_cast<sf::Vector2f>(mousePos)))
 					{
-						std::cout << "Clicked: " << i << ":" << k << "\n";
+						std::cout << "Clicked: " << row << ":" << column << "\n";
+						std::cout << "Map: " << this->tp.TileMapVector_Init[row][column] << "\n";
 						//std::cout << "Rect Text: " << this->SpriteCell.getTextureRect().height << "\n";
-
-						this->NumberSpriteVector[this->count % Number_ofNumberCellsSprite].setPosition(this->CellsVector[i][k].getPosition());
-						this->CellsVector[i][k] = this->NumberSpriteVector[this->count % Number_ofNumberCellsSprite];
-						this->count++;
+						if (this->tp.TileMapVector_Init[row][column] == 0)
+						{
+							std::set<std::pair<int, int>> isCheckedEmpty;
+							expandEmptyCells(row, column, isCheckedEmpty);
+						}
+						this->SpriteVector[this->tp.TileMapVector_Init[row][column]].setPosition(this->CellsVector[row][column].getPosition());
+						this->CellsVector[row][column] = this->SpriteVector[tp.TileMapVector_Init[row][column]];
+						
 						return; // Exit function if mouse is inside any cell
 					}
 				}
@@ -98,16 +109,16 @@ void Cells::ifMouseInClicked(sf::RenderWindow& window) {
 		{
 			//std::cout << "Clicked!\n"; 
 			isRightMouseClicked = true;
-			for (uint16_t i = 0; i < Rows; i++)
+			for (uint16_t row = 0; row < Rows; row++)
 			{
-				for (uint16_t k = 0; k < Columns; k++)
+				for (uint16_t column = 0; column < Columns; column++)
 				{
-					sf::FloatRect cellBounds = this->CellsVector[i][k].getGlobalBounds();
+					sf::FloatRect cellBounds = this->CellsVector[row][column].getGlobalBounds();
 					if (cellBounds.contains(static_cast<sf::Vector2f>(mousePos)))
 					{
-						std::cout << "Clicked: " << i << ":" << k << "\n";
-						this->FlaggedSprite.setPosition(this->CellsVector[i][k].getPosition());
-						this->CellsVector[i][k] = this->FlaggedSprite;
+						std::cout << "Clicked: " << row << ":" << column << "\n";
+						this->FlaggedSprite.setPosition(this->CellsVector[row][column].getPosition());
+						this->CellsVector[row][column] = this->FlaggedSprite;
 
 						return; // Exit function if mouse is inside any cell
 					}

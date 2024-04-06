@@ -26,7 +26,8 @@ private:
 	sf::Sprite FlaggedSprite;
 
 	std::vector<std::vector<sf::Sprite>> CellsVector;
-	std::vector<sf::Sprite> NumberSpriteVector;
+	std::vector<sf::Sprite> SpriteVector;
+
 
 	bool isLeftMouseClicked;
 	bool isRightMouseClicked;
@@ -36,6 +37,8 @@ private:
 	inline void subCalBomb(const uint16_t& Check_i, const uint16_t& Check_k, const uint16_t& i, const uint16_t& k);
 	void RandomizeBombs();
 	void printTileMap_of_Bomb();
+
+	void expandEmptyCells(const uint16_t& i ,const  uint16_t& k, std::set<std::pair<int, int>>& isCheckedEmpty);
 public:
 	Cells();
 	~Cells();

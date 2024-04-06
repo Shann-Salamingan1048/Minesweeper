@@ -193,3 +193,147 @@ void Cells::RandomizeBombs()
 	}
 	//this->count = 0;
 }
+// not done yet, still experimenting
+void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::pair<int,int>>& isCheckedEmpty)
+{
+	// Check if the cell has already been visited
+	if (isCheckedEmpty.find({ i, k }) != isCheckedEmpty.end()) 
+	{
+		return;
+	}
+	isCheckedEmpty.insert({ i, k });
+	this->SpriteVector[this->tp.TileMapVector_Init[i][k]].setPosition(this->CellsVector[i][k].getPosition());
+	this->CellsVector[i][k] = this->SpriteVector[tp.TileMapVector_Init[i][k]];
+	if (this->tp.TileMapVector_Init[i][k] != 0 ) // if not empty
+	{
+		return;
+	}
+		if ((i != 0 && i != Rows - 1) && (k != 0 && k != Columns - 1)) // if it is in 8 blocks check , not in beginning
+			// not in the very right or very left and not in last
+		{
+			for (uint16_t l = 0; l < 3; l++)
+			{
+				uint16_t Check_i = i - 1 + l;
+				for (uint16_t p = 0; p < 3; p++)
+				{
+					uint16_t Check_k = k - 1 + p;
+					if (k == Check_k && i == Check_i)
+						continue;
+					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+				}
+			}
+		}
+		else if ((i == 0) && (k == 0)) // Upper Left edge, 3 blocks check
+		{
+			for (uint16_t l = 0; l < 2; l++)
+			{
+				uint16_t Check_i = i + l;
+				for (uint16_t p = 0; p < 2; p++)
+				{
+					uint16_t Check_k = k + p;
+					if (k == Check_k && i == Check_i)
+						continue;
+					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+				}
+			}
+		}
+		else if (k == 0 && (i != 0 && i != Rows - 1)) // very left , no uppper or lower edge, 5 blocks 
+		{
+			for (uint16_t l = 0; l < 3; l++)
+			{
+				uint16_t Check_i = i - 1 + l;
+				for (uint16_t p = 0; p < 2; p++)
+				{
+					uint16_t Check_k = k + p;
+					if (k == Check_k && i == Check_i)
+						continue;
+					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+				}
+			}
+		}
+		else if ((i == Rows - 1) && (k == 0)) // Lower Left Edge, 3 blocks
+		{
+			for (uint16_t l = 0; l < 2; l++)
+			{
+				uint16_t Check_i = i - 1 + l;
+				for (uint16_t p = 0; p < 2; p++)
+				{
+					uint16_t Check_k = k + p;
+					if (k == Check_k && i == Check_i)
+						continue;
+					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+				}
+			}
+		}
+		else if ((i == 0) && (k != 0 && k != Columns - 1)) // very upper , no left edge and right edge, 5 blocks
+		{
+			for (uint16_t l = 0; l < 2; l++)
+			{
+				uint16_t Check_i = i + l;
+				for (uint16_t p = 0; p < 3; p++)
+				{
+					uint16_t Check_k = k - 1 + p;
+					if (k == Check_k && i == Check_i)
+						continue;
+					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+				}
+			}
+		}
+		else if ((i == 0) && (k == Columns - 1)) // upper right edge , 3 blocks 
+		{
+			for (uint16_t l = 0; l < 2; l++)
+			{
+				uint16_t Check_i = i + l;
+				for (uint16_t p = 0; p < 2; p++)
+				{
+					uint16_t Check_k = k - 1 + p;
+					if (k == Check_k && i == Check_i)
+						continue;
+					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+				}
+			}
+		}
+		else if ((k == Columns - 1) && (i != 0 && i != Rows - 1)) // very right, 5 blocks
+		{
+			for (uint16_t l = 0; l < 3; l++)
+			{
+				uint16_t Check_i = i - 1 + l;
+				for (uint16_t p = 0; p < 2; p++)
+				{
+					uint16_t Check_k = k - 1 + p;
+					if (k == Check_k && i == Check_i)
+						continue;
+					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+				}
+			}
+		}
+		else if ((k == Columns - 1) && (i == Rows - 1)) // Lower Right Edge,  3 blocks
+		{
+			for (uint16_t l = 0; l < 2; l++)
+			{
+				uint16_t Check_i = i - 1 + l;
+				for (uint16_t p = 0; p < 2; p++)
+				{
+					uint16_t Check_k = k - 1 + p;
+					if (k == Check_k && i == Check_i)
+						continue;
+					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+				}
+			}
+		}
+		else if ((i == Rows - 1) && ((k != 0 && k != Columns - 1))) // very bottom 
+		{
+			for (uint16_t l = 0; l < 2; l++)
+			{
+				uint16_t Check_i = i - 1 + l;
+				for (uint16_t p = 0; p < 3; p++)
+				{
+					uint16_t Check_k = k - 1 + p;
+					if (k == Check_k && i == Check_i)
+						continue;
+					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+				}
+			}
+		}
+	
+}
