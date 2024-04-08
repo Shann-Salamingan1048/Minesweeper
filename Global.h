@@ -24,4 +24,18 @@ struct TileMaps
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
+	std::vector<std::vector<bool>> TileMapVisited_Init // this is for checking the recursion
+	{
+		{false, false, false, false, false,      false, false, false, false, false},
+		{false, false, false, false, false,      false, false, false, false, false},
+		{false, false, false, false, false,      false, false, false, false, false},
+		{false, false, false, false, false,      false, false, false, false, false},
+		{false, false, false, false, false,      false, false, false, false, false},
+
+		{false, false, false, false, false,      false, false, false, false, false},
+		{false, false, false, false, false,      false, false, false, false, false},
+		{false, false, false, false, false,      false, false, false, false, false},
+		{false, false, false, false, false,      false, false, false, false, false},
+		{false, false, false, false, false,      false, false, false, false, false},
+	};
 };

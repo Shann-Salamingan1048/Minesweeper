@@ -194,6 +194,8 @@ void Cells::RandomizeBombs()
 	//this->count = 0;
 }
 // not done yet, still experimenting
+/// i think i should use , map<pair<int,int>, bool> , because set is not that efficient i guess
+// need to further enhanced or optimized
 void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::pair<int,int>>& isCheckedEmpty)
 {
 	// Check if the cell has already been visited
@@ -201,7 +203,7 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 	{
 		return;
 	}
-	isCheckedEmpty.insert({ i, k });
+	isCheckedEmpty.insert({ i, k }); // if not yet visited then mark it as visited as of now 
 	this->SpriteVector[this->tp.TileMapVector_Init[i][k]].setPosition(this->CellsVector[i][k].getPosition());
 	this->CellsVector[i][k] = this->SpriteVector[tp.TileMapVector_Init[i][k]];
 	if (this->tp.TileMapVector_Init[i][k] != 0 ) // if not empty
@@ -217,9 +219,11 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 				for (uint16_t p = 0; p < 3; p++)
 				{
 					uint16_t Check_k = k - 1 + p;
-					if (k == Check_k && i == Check_i)
+					if ((k == Check_k && i == Check_i))
 						continue;
-					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue; // check if this Check_i and Check_k is already exists in the set
+					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
 				}
 			}
 		}
@@ -231,9 +235,11 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 				for (uint16_t p = 0; p < 2; p++)
 				{
 					uint16_t Check_k = k + p;
-					if (k == Check_k && i == Check_i)
+					if ((k == Check_k && i == Check_i))
 						continue;
-					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue;
+					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
 				}
 			}
 		}
@@ -245,9 +251,11 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 				for (uint16_t p = 0; p < 2; p++)
 				{
 					uint16_t Check_k = k + p;
-					if (k == Check_k && i == Check_i)
+					if ((k == Check_k && i == Check_i))
 						continue;
-					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue;
+					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
 				}
 			}
 		}
@@ -259,9 +267,11 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 				for (uint16_t p = 0; p < 2; p++)
 				{
 					uint16_t Check_k = k + p;
-					if (k == Check_k && i == Check_i)
+					if ((k == Check_k && i == Check_i))
 						continue;
-					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue;
+					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
 				}
 			}
 		}
@@ -273,9 +283,11 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 				for (uint16_t p = 0; p < 3; p++)
 				{
 					uint16_t Check_k = k - 1 + p;
-					if (k == Check_k && i == Check_i)
+					if ((k == Check_k && i == Check_i))
 						continue;
-					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue;
+					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
 				}
 			}
 		}
@@ -287,9 +299,11 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 				for (uint16_t p = 0; p < 2; p++)
 				{
 					uint16_t Check_k = k - 1 + p;
-					if (k == Check_k && i == Check_i)
+					if ((k == Check_k && i == Check_i))
 						continue;
-					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue;
+					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
 				}
 			}
 		}
@@ -301,9 +315,11 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 				for (uint16_t p = 0; p < 2; p++)
 				{
 					uint16_t Check_k = k - 1 + p;
-					if (k == Check_k && i == Check_i)
+					if ((k == Check_k && i == Check_i))
 						continue;
-					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue;
+					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
 				}
 			}
 		}
@@ -315,9 +331,11 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 				for (uint16_t p = 0; p < 2; p++)
 				{
 					uint16_t Check_k = k - 1 + p;
-					if (k == Check_k && i == Check_i)
+					if ((k == Check_k && i == Check_i))
 						continue;
-					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue;
+					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
 				}
 			}
 		}
@@ -329,9 +347,13 @@ void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::
 				for (uint16_t p = 0; p < 3; p++)
 				{
 					uint16_t Check_k = k - 1 + p;
-					if (k == Check_k && i == Check_i)
+					/*if ((k == Check_k && i == Check_i) && isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue;*/
+					if ((k == Check_k && i == Check_i))
 						continue;
-					return expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
+					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
+						continue;
+					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
 				}
 			}
 		}

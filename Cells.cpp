@@ -86,18 +86,24 @@ void Cells::ifMouseInClicked(sf::RenderWindow& window) {
 					sf::FloatRect cellBounds = this->CellsVector[row][column].getGlobalBounds();
 					if (cellBounds.contains(static_cast<sf::Vector2f>(mousePos)))
 					{
+						if (this->CellsVector[row][column].getTextureRect() == this->FlaggedSprite.getTextureRect())
+							return; // if flagged then it cannot be open
 						std::cout << "Clicked: " << row << ":" << column << "\n";
 						std::cout << "Map: " << this->tp.TileMapVector_Init[row][column] << "\n";
-						//std::cout << "Rect Text: " << this->SpriteCell.getTextureRect().height << "\n";
+						
 						if (this->tp.TileMapVector_Init[row][column] == 0)
 						{
 							std::set<std::pair<int, int>> isCheckedEmpty;
+							//isCheckedEmpty.insert({ row, column });
 							expandEmptyCells(row, column, isCheckedEmpty);
 						}
+						this->tp.TileMapVisited_Init[row][column] = true; // if opened then it is now visited
+						// this TileMapVisited_Init is for the recursion
+
 						this->SpriteVector[this->tp.TileMapVector_Init[row][column]].setPosition(this->CellsVector[row][column].getPosition());
 						this->CellsVector[row][column] = this->SpriteVector[tp.TileMapVector_Init[row][column]];
 						
-						return; // Exit function if mouse is inside any cell
+						return; 
 					}
 				}
 			}
@@ -116,11 +122,14 @@ void Cells::ifMouseInClicked(sf::RenderWindow& window) {
 					sf::FloatRect cellBounds = this->CellsVector[row][column].getGlobalBounds();
 					if (cellBounds.contains(static_cast<sf::Vector2f>(mousePos)))
 					{
+						if (this->CellsVector[row][column].getTextureRect() != this->UnknownCellSprite.getTextureRect())
+							return; // if not unkown cell then it cannot be flagged
 						std::cout << "Clicked: " << row << ":" << column << "\n";
+						
 						this->FlaggedSprite.setPosition(this->CellsVector[row][column].getPosition());
 						this->CellsVector[row][column] = this->FlaggedSprite;
 
-						return; // Exit function if mouse is inside any cell
+						return; 
 					}
 				}
 			}
