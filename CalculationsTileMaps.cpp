@@ -174,9 +174,9 @@ void Cells::RandomizeBombs()
 	// Define a distribution
 	std::uniform_int_distribution<> ColumnRandom(0, Columns - 1); // index, from 0 to ColumnsNumber - 1
 	std::uniform_int_distribution<> RowRandom(0, Rows - 1); // index, from 0 to RowsNumbers - 1
-	while (StoreIndexes.size() < NumberOfBombs) 
+	while (StoreIndexes.size() < NumberOfBombs)
 	{
-		uint16_t RowIndex = RowRandom(gen); 
+		uint16_t RowIndex = RowRandom(gen);
 		uint16_t ColumnIndex = ColumnRandom(gen);
 		//std::cout << "Not True Row: " << RowIndex << ", Column: " << ColumnIndex << "\n";
 		StoreIndexes.insert({ RowIndex, ColumnIndex });  // set does not allow duplication
@@ -193,169 +193,203 @@ void Cells::RandomizeBombs()
 	}
 	//this->count = 0;
 }
-// not done yet, still experimenting
-/// i think i should use , map<pair<int,int>, bool> , because set is not that efficient i guess
-// need to further enhanced or optimized
-void Cells::expandEmptyCells(const uint16_t& i,const uint16_t& k, std::set<std::pair<int,int>>& isCheckedEmpty)
+
+// this algorithm is optimized or current well known optimization
+void Cells::expandEmptyCells(const uint16_t& i, const uint16_t& k)
 {
 	// Check if the cell has already been visited
-	if (isCheckedEmpty.find({ i, k }) != isCheckedEmpty.end()) 
+	if (this->isCheckedEmpty.find({ i, k }) != this->isCheckedEmpty.end())
 	{
 		return;
 	}
-	isCheckedEmpty.insert({ i, k }); // if not yet visited then mark it as visited as of now 
+	this->isCheckedEmpty.insert({ i, k }); // if not yet visited then mark it as visited as of now 
 	this->SpriteVector[this->tp.TileMapVector_Init[i][k]].setPosition(this->CellsVector[i][k].getPosition());
 	this->CellsVector[i][k] = this->SpriteVector[tp.TileMapVector_Init[i][k]];
-	if (this->tp.TileMapVector_Init[i][k] != 0 ) // if not empty
+	if (this->tp.TileMapVector_Init[i][k] != 0) // if not empty
 	{
 		return;
 	}
-		if ((i != 0 && i != Rows - 1) && (k != 0 && k != Columns - 1)) // if it is in 8 blocks check , not in beginning
-			// not in the very right or very left and not in last
+	if ((i != 0 && i != Rows - 1) && (k != 0 && k != Columns - 1)) // if it is in 8 blocks check , not in beginning
+		// not in the very right or very left and not in last
+	{
+		for (uint16_t l = 0; l < 3; l++)
 		{
-			for (uint16_t l = 0; l < 3; l++)
+			uint16_t Check_i = i - 1 + l;
+			for (uint16_t p = 0; p < 3; p++)
 			{
-				uint16_t Check_i = i - 1 + l;
-				for (uint16_t p = 0; p < 3; p++)
-				{
-					uint16_t Check_k = k - 1 + p;
-					if ((k == Check_k && i == Check_i))
-						continue;
-					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue; // check if this Check_i and Check_k is already exists in the set
-					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
-				}
+				uint16_t Check_k = k - 1 + p;
+				if ((k == Check_k && i == Check_i))
+					continue;
+				if (this->isCheckedEmpty.find({ Check_i, Check_k }) != this->isCheckedEmpty.end())
+					continue; // check if this Check_i and Check_k is already exists in the set
+				expandEmptyCells(Check_i, Check_k);
 			}
 		}
-		else if ((i == 0) && (k == 0)) // Upper Left edge, 3 blocks check
+	}
+	else if ((i == 0) && (k == 0)) // Upper Left edge, 3 blocks check
+	{
+		for (uint16_t l = 0; l < 2; l++)
 		{
-			for (uint16_t l = 0; l < 2; l++)
+			uint16_t Check_i = i + l;
+			for (uint16_t p = 0; p < 2; p++)
 			{
-				uint16_t Check_i = i + l;
-				for (uint16_t p = 0; p < 2; p++)
-				{
-					uint16_t Check_k = k + p;
-					if ((k == Check_k && i == Check_i))
-						continue;
-					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue;
-					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
-				}
+				uint16_t Check_k = k + p;
+				if ((k == Check_k && i == Check_i))
+					continue;
+				if (this->isCheckedEmpty.find({ Check_i, Check_k }) != this->isCheckedEmpty.end())
+					continue; // check if this Check_i and Check_k is already exists in the set
+				expandEmptyCells(Check_i, Check_k);
 			}
 		}
-		else if (k == 0 && (i != 0 && i != Rows - 1)) // very left , no uppper or lower edge, 5 blocks 
+	}
+	else if (k == 0 && (i != 0 && i != Rows - 1)) // very left , no uppper or lower edge, 5 blocks 
+	{
+		for (uint16_t l = 0; l < 3; l++)
 		{
-			for (uint16_t l = 0; l < 3; l++)
+			uint16_t Check_i = i - 1 + l;
+			for (uint16_t p = 0; p < 2; p++)
 			{
-				uint16_t Check_i = i - 1 + l;
-				for (uint16_t p = 0; p < 2; p++)
-				{
-					uint16_t Check_k = k + p;
-					if ((k == Check_k && i == Check_i))
-						continue;
-					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue;
-					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
-				}
+				uint16_t Check_k = k + p;
+				if ((k == Check_k && i == Check_i))
+					continue;
+				if (this->isCheckedEmpty.find({ Check_i, Check_k }) != this->isCheckedEmpty.end())
+					continue; // check if this Check_i and Check_k is already exists in the set
+				expandEmptyCells(Check_i, Check_k);
 			}
 		}
-		else if ((i == Rows - 1) && (k == 0)) // Lower Left Edge, 3 blocks
+	}
+	else if ((i == Rows - 1) && (k == 0)) // Lower Left Edge, 3 blocks
+	{
+		for (uint16_t l = 0; l < 2; l++)
 		{
-			for (uint16_t l = 0; l < 2; l++)
+			uint16_t Check_i = i - 1 + l;
+			for (uint16_t p = 0; p < 2; p++)
 			{
-				uint16_t Check_i = i - 1 + l;
-				for (uint16_t p = 0; p < 2; p++)
-				{
-					uint16_t Check_k = k + p;
-					if ((k == Check_k && i == Check_i))
-						continue;
-					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue;
-					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
-				}
+				uint16_t Check_k = k + p;
+				if ((k == Check_k && i == Check_i))
+					continue;
+				if (this->isCheckedEmpty.find({ Check_i, Check_k }) != this->isCheckedEmpty.end())
+					continue; // check if this Check_i and Check_k is already exists in the set
+				expandEmptyCells(Check_i, Check_k);
 			}
 		}
-		else if ((i == 0) && (k != 0 && k != Columns - 1)) // very upper , no left edge and right edge, 5 blocks
+	}
+	else if ((i == 0) && (k != 0 && k != Columns - 1)) // very upper , no left edge and right edge, 5 blocks
+	{
+		for (uint16_t l = 0; l < 2; l++)
 		{
-			for (uint16_t l = 0; l < 2; l++)
+			uint16_t Check_i = i + l;
+			for (uint16_t p = 0; p < 3; p++)
 			{
-				uint16_t Check_i = i + l;
-				for (uint16_t p = 0; p < 3; p++)
-				{
-					uint16_t Check_k = k - 1 + p;
-					if ((k == Check_k && i == Check_i))
-						continue;
-					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue;
-					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
-				}
+				uint16_t Check_k = k - 1 + p;
+				if ((k == Check_k && i == Check_i))
+					continue;
+				if (this->isCheckedEmpty.find({ Check_i, Check_k }) != this->isCheckedEmpty.end())
+					continue; // check if this Check_i and Check_k is already exists in the set
+				expandEmptyCells(Check_i, Check_k);
 			}
 		}
-		else if ((i == 0) && (k == Columns - 1)) // upper right edge , 3 blocks 
+	}
+	else if ((i == 0) && (k == Columns - 1)) // upper right edge , 3 blocks 
+	{
+		for (uint16_t l = 0; l < 2; l++)
 		{
-			for (uint16_t l = 0; l < 2; l++)
+			uint16_t Check_i = i + l;
+			for (uint16_t p = 0; p < 2; p++)
 			{
-				uint16_t Check_i = i + l;
-				for (uint16_t p = 0; p < 2; p++)
-				{
-					uint16_t Check_k = k - 1 + p;
-					if ((k == Check_k && i == Check_i))
-						continue;
-					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue;
-					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
-				}
+				uint16_t Check_k = k - 1 + p;
+				if ((k == Check_k && i == Check_i))
+					continue;
+				if (this->isCheckedEmpty.find({ Check_i, Check_k }) != this->isCheckedEmpty.end())
+					continue; // check if this Check_i and Check_k is already exists in the set
+				expandEmptyCells(Check_i, Check_k);
 			}
 		}
-		else if ((k == Columns - 1) && (i != 0 && i != Rows - 1)) // very right, 5 blocks
+	}
+	else if ((k == Columns - 1) && (i != 0 && i != Rows - 1)) // very right, 5 blocks
+	{
+		for (uint16_t l = 0; l < 3; l++)
 		{
-			for (uint16_t l = 0; l < 3; l++)
+			uint16_t Check_i = i - 1 + l;
+			for (uint16_t p = 0; p < 2; p++)
 			{
-				uint16_t Check_i = i - 1 + l;
-				for (uint16_t p = 0; p < 2; p++)
-				{
-					uint16_t Check_k = k - 1 + p;
-					if ((k == Check_k && i == Check_i))
-						continue;
-					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue;
-					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
-				}
+				uint16_t Check_k = k - 1 + p;
+				if ((k == Check_k && i == Check_i))
+					continue;
+				if (this->isCheckedEmpty.find({ Check_i, Check_k }) != this->isCheckedEmpty.end())
+					continue; // check if this Check_i and Check_k is already exists in the set
+				expandEmptyCells(Check_i, Check_k);
 			}
 		}
-		else if ((k == Columns - 1) && (i == Rows - 1)) // Lower Right Edge,  3 blocks
+	}
+	else if ((k == Columns - 1) && (i == Rows - 1)) // Lower Right Edge,  3 blocks
+	{
+		for (uint16_t l = 0; l < 2; l++)
 		{
-			for (uint16_t l = 0; l < 2; l++)
+			uint16_t Check_i = i - 1 + l;
+			for (uint16_t p = 0; p < 2; p++)
 			{
-				uint16_t Check_i = i - 1 + l;
-				for (uint16_t p = 0; p < 2; p++)
-				{
-					uint16_t Check_k = k - 1 + p;
-					if ((k == Check_k && i == Check_i))
-						continue;
-					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue;
-					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
-				}
+				uint16_t Check_k = k - 1 + p;
+				if ((k == Check_k && i == Check_i))
+					continue;
+				if (this->isCheckedEmpty.find({ Check_i, Check_k }) != this->isCheckedEmpty.end())
+					continue; // check if this Check_i and Check_k is already exists in the set
+				expandEmptyCells(Check_i, Check_k);
 			}
 		}
-		else if ((i == Rows - 1) && ((k != 0 && k != Columns - 1))) // very bottom 
+	}
+	else if ((i == Rows - 1) && ((k != 0 && k != Columns - 1))) // very bottom 
+	{
+		for (uint16_t l = 0; l < 2; l++)
 		{
-			for (uint16_t l = 0; l < 2; l++)
+			uint16_t Check_i = i - 1 + l;
+			for (uint16_t p = 0; p < 3; p++)
 			{
-				uint16_t Check_i = i - 1 + l;
-				for (uint16_t p = 0; p < 3; p++)
-				{
-					uint16_t Check_k = k - 1 + p;
-					/*if ((k == Check_k && i == Check_i) && isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue;*/
-					if ((k == Check_k && i == Check_i))
-						continue;
-					if (isCheckedEmpty.find({ Check_i, Check_k }) != isCheckedEmpty.end())
-						continue;
-					expandEmptyCells(Check_i, Check_k, isCheckedEmpty);
-				}
+				uint16_t Check_k = k - 1 + p;
+				if ((k == Check_k && i == Check_i))
+					continue;
+				if (this->isCheckedEmpty.find({ Check_i, Check_k }) != this->isCheckedEmpty.end())
+					continue; // check if this Check_i and Check_k is already exists in the set
+				expandEmptyCells(Check_i, Check_k);
 			}
 		}
+	}
+
+}
+
+void Cells::restart()
+{
+	this->isGameOver = false;
+	this->isCheckedEmpty.clear();
+	std::vector<std::vector<uint16_t>> RestartTileMapVector_Init // 10 = bomb, 0 = empty
+	{
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	};
+	this->tp.TileMapVector_Init = RestartTileMapVector_Init;
+	//for (auto& row : this->tp.TileMapVector_Init)
+	//{
+	//	std::fill(row.begin(), row.end(), 0);
+	//}
+	for (uint16_t i = 0; i < Rows; i++)
+	{
+		for (uint16_t k = 0; k < Columns; k++)
+		{
+			this->UnknownCellSprite.setPosition(sf::Vector2(k * this->UnknownCellSprite.getGlobalBounds().width
+				, i * this->UnknownCellSprite.getGlobalBounds().height)); // width and height
+			this->CellsVector[i][k] = this->UnknownCellSprite;
+		}
+	} // unknown cells
 	
+	this->RandomizeBombs();
+	this->CalculationsBombNumbers();
 }

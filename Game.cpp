@@ -1,7 +1,7 @@
 #include "Game.h"
 void Game::initWindow()
 {
-	this->videoMode.height = 1200;
+	this->videoMode.height = 1320;
 	this->videoMode.width = 1200;
 	this->window = std::make_unique<sf::RenderWindow>(this->videoMode, "Minesweeper", sf::Style::Titlebar | sf::Style::Close); // smart ptr
 	this->window->setFramerateLimit(60);

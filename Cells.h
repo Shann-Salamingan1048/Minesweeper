@@ -18,6 +18,14 @@ private:
 	sf::Texture TextureAllTypeCells;
 	sf::Texture CursorGlove;
 
+	sf::Texture Texture_GO; // GO = Game Over
+	sf::Sprite Sprite_GO;
+
+	sf::Texture Texture_Emoji;
+	sf::Sprite Sprite_Emoji;
+	std::vector < sf::Sprite> EmojiVector;
+	std::vector < sf::Sprite> Emoji_Background;
+	
 	sf::Sprite UnknownCellSprite;
 	sf::Sprite EmptyCellSprite;
 	sf::Sprite BombCellSprite;
@@ -27,9 +35,10 @@ private:
 
 	std::vector<std::vector<sf::Sprite>> CellsVector;
 	std::vector<sf::Sprite> SpriteVector;
-
+	std::set<std::pair<int, int>> isCheckedEmpty;
 
 	bool isLeftMouseClicked;
+	bool isLeftMouseClicked_Restart;
 	bool isRightMouseClicked;
 	TileMaps tp;
 	uint16_t count; // for 1 - 9 numbers cells , experimental only
@@ -38,7 +47,11 @@ private:
 	void RandomizeBombs();
 	void printTileMap_of_Bomb();
 
-	void expandEmptyCells(const uint16_t& i ,const  uint16_t& k, std::set<std::pair<int, int>>& isCheckedEmpty);
+	void expandEmptyCells(const uint16_t& i, const  uint16_t& k);
+
+	void restart();
+	
+	bool isGameOver;
 public:
 	Cells();
 	~Cells();

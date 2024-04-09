@@ -24,18 +24,13 @@ struct TileMaps
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
-	std::vector<std::vector<bool>> TileMapVisited_Init // this is for checking the recursion
-	{
-		{false, false, false, false, false,      false, false, false, false, false},
-		{false, false, false, false, false,      false, false, false, false, false},
-		{false, false, false, false, false,      false, false, false, false, false},
-		{false, false, false, false, false,      false, false, false, false, false},
-		{false, false, false, false, false,      false, false, false, false, false},
-
-		{false, false, false, false, false,      false, false, false, false, false},
-		{false, false, false, false, false,      false, false, false, false, false},
-		{false, false, false, false, false,      false, false, false, false, false},
-		{false, false, false, false, false,      false, false, false, false, false},
-		{false, false, false, false, false,      false, false, false, false, false},
-	};
+	//std::vector<std::vector<uint16_t>> TileMapVector_Init;
+	//TileMaps() : TileMapVector_Init(Rows, std::vector<uint16_t>(Columns))
+	//{
+	//	// Fill the RestartTileMapVector_Init with zeros
+	//	for (auto& row : TileMapVector_Init)
+	//	{
+	//		std::fill(row.begin(), row.end(), 0);
+	//	}
+	//} // initialize all to zero
 };
